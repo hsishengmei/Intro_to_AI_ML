@@ -9,6 +9,7 @@ from sklearn import linear_model
 
 if __name__ == '__main__':
     X, Y, testX = parse_data()
+    print X.shape
     print 'normalize data'
     scaler = StandardScaler()
     scaler.fit(X)
@@ -33,7 +34,7 @@ if __name__ == '__main__':
             anova_svm = make_pipeline(anova_filter, model)
             anova_svm = model
 
-            print 'cross validation'
+            # print 'cross validation'
             sum_pre, sum_tp = 0, 0
             n = 1000
             n_fold = len(X)/n
@@ -46,8 +47,8 @@ if __name__ == '__main__':
 
                 anova_svm.fit(np.array(X),np.array(Y))
 
-                # predict_ = anova_svm.predict(X[i*n:(i+1)*n])
-                predict_ = anova_svm.predict(testX)
+                predict_ = anova_svm.predict(X[i*n:(i+1)*n])
+                # predict_ = anova_svm.predict(testX)
 
                 rank_list = [] 
                 for i,j in enumerate(predict_):
@@ -57,19 +58,19 @@ if __name__ == '__main__':
                 rank_list.reverse()
                 print len(rank_list)
 
-                # # evaluate result
-                # actual = Y[:1000]
-                # print actual
-                # # avg_precision = 0
-                # # a = []
-                # for i in rank_list[:100]:
-                #     print predict_[i[1]], actual[i[1]]
-                #     a.append(actual[i[1]])
-                # # print a
-                # for i in range(100):
-                #     avg_precision += 1.0*sum(a[:(i+1)])/(i+1)
-                # avg_precision = avg_precision/100
-                # print 'avg_precision:', avg_precision
+                # evaluate result
+                actual = Y[:1000]
+                print actual
+                avg_precision = 0
+                a = []
+                for i in rank_list[:100]:
+                    print predict_[i[1]], actual[i[1]]
+                    a.append(actual[i[1]])
+                # print a
+                for i in range(100):
+                    avg_precision += 1.0*sum(a[:(i+1)])/(i+1)
+                avg_precision = avg_precision/100
+                print 'avg_precision:', avg_precision
 
                 # write result to file
                 with open('svm_result.csv', 'w') as f:
